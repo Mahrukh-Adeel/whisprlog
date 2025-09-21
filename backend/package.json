@@ -1,0 +1,25 @@
+{
+  "name": "whisprlog-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "reminders": "node scripts/reminder-job.js",
+    "cleanup": "node scripts/data-cleanup-job.js",
+    "backup": "node scripts/data-backup-job.js",
+    "test-backup": "node scripts/test-backup.js",
+    "test-email": "node scripts/test-email.js"
+  },
+  "dependencies": {
+    "@azure/communication-email": "^1.0.0",
+    "@azure/identity": "^4.0.0",
+    "axios": "^1.11.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^4.18.2",
+    "firebase-admin": "^11.10.1",
+    "mongodb": "^6.19.0",
+    "pdfkit": "^0.17.2"
+  }
+}
