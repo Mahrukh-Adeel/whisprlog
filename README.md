@@ -17,21 +17,21 @@ A gentle, AI-powered journaling application that provides a safe space for self-
 
 ### Core Functionality
 - **Journal Entries**: Write and manage your thoughts with a clean, distraction-free interface
-- **AI Emotional Analysis**: Get compassionate insights about your emotional state and patterns
+- **AI Emotional Analysis**: Get emotional summaries, sentiment, mood, and emotion labels. Azure OpenAI is optional; the backend uses fallback analysis when it is not configured.
 - **Trends & Analytics**: Visualize your emotional journey with detailed analytics and interactive charts
 - **Custom Goals**: Set personalized goals beyond basic streaks (e.g., "Write 3 times a week", "Practice gratitude daily")
 - **Weekly Check-ins**: Gentle weekly reflection prompts to maintain consistency
 - **Profile Management**: Customize your experience with privacy settings and preferences
-- **PDF Export**: Export your journal entries and insights as beautifully formatted PDFs
+- **PDF Export**: Export a PDF journal report containing summary statistics and entries from up to the 20 most recent dates
 - **Quick Check-ins**: One-tap mood entries with emoji shortcuts for fast journaling
 
 ### User Experience
-- **Secure Authentication**: Firebase-powered authentication with email/password and anonymous options
+- **Authentication**: Firebase-powered email/password and anonymous sign-in handled by the frontend
 - **Beautiful UI**: Modern, calming design with Tailwind CSS and smooth animations
 - **Dark Mode**: Complete dark mode support throughout the entire application
 - **Micro-interactions**: Gentle animations and smooth transitions for enhanced user experience
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
-- **Gentle Reminders**: Optional notifications to encourage regular journaling
+- **Gentle Reminders**: Optional weekly email reminders run by the backend reminder job
 - **Privacy Controls**: Granular privacy settings for data retention and AI analysis
 
 ## Tech Stack
@@ -60,7 +60,7 @@ A gentle, AI-powered journaling application that provides a safe space for self-
 ## Getting Started
 
 ### Prerequisites
-- Node.js (v16 or higher)
+- Node.js compatible with Vite 7 (Node.js 20.19+ recommended)
 - npm or yarn
 - Firebase project with Authentication enabled
 - MongoDB/CosmosDB database
@@ -91,21 +91,36 @@ A gentle, AI-powered journaling application that provides a safe space for self-
    - Create a Firebase project at [https://console.firebase.google.com/](https://console.firebase.google.com/)
    - Enable Authentication with Email/Password and Anonymous sign-in
    - Generate a service account key and save it as `backend/serviceAccountKey.json`
-   - Copy your Firebase config to `app/src/services/firebase.js`
+   - Add your Firebase web app values to `app/.env.local` using the `VITE_FIREBASE_*` variables below
 
 4. **Configure environment variables**
    ```bash
    cd backend
-   cp .env.example .env
+   touch .env
    ```
 
    Edit `.env` with your configuration:
    ```env
    COSMOSDB_URI=your_mongodb_connection_string
    COSMOSDB_DBNAME=your_database_name
-   AI_API_KEY=your_ai_service_api_key
+   AZURE_OPENAI_API_KEY=your_azure_openai_api_key
+   AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+   AZURE_OPENAI_DEPLOYMENT=your_deployment_name
    PORT=5002
    ```
+
+   Create `app/.env.local` with the Firebase `VITE_*` values and, optionally, the API URL:
+   ```env
+   VITE_FIREBASE_API_KEY=your_firebase_api_key
+   VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_firebase_app_id
+   VITE_API_BASE=http://localhost:5002
+   ```
+
+   No `.env.example` files are currently included, so create these files manually and do not commit them.
 
 5. **Start the development servers**
    ```bash
@@ -119,15 +134,14 @@ A gentle, AI-powered journaling application that provides a safe space for self-
    ```
 
 6. **Open your browser**
-   Navigate to `http://localhost:5173` to access WhisprLog
+   Navigate to `http://localhost:5173` to access WhisprLog. The backend health endpoint is `http://localhost:5002/api/health`.
 
 ## � Security & Environment Setup
 
 This project uses environment variables for sensitive configuration. **Never commit API keys or secrets to version control.**
 
 ### Environment Files
-- `.env.example` - Template for backend environment variables
-- `app/.env.example` - Template for frontend environment variables
+- `backend/.env` and `app/.env.local` - Local environment configuration files (create these locally)
 - `.gitignore` - Excludes sensitive files from version control
 
 ### Key Security Features
@@ -144,7 +158,6 @@ See **[SETUP.md](SETUP.md)** for detailed security configuration.
 ```
 whisprlog/
 ├── app/                    # Frontend React application
-│   ├── public/            # Static assets
 │   ├── src/
 │   │   ├── components/    # Reusable React components
 │   │   ├── services/      # Firebase and API services
@@ -174,6 +187,9 @@ npm run lint     # Run ESLint
 ### Backend (`backend/` directory)
 ```bash
 npm start        # Start the server
+npm run reminders # Send opted-in weekly reminder emails
+npm run cleanup   # Apply configured data-retention policies
+npm run backup    # Run the data-backup job
 ```
 
 ## Key Components
@@ -184,11 +200,11 @@ npm start        # Start the server
 - **Persistent Sessions**: Stay logged in across browser sessions
 
 ### Journal Management
-- **Rich Text Editor**: Clean interface for writing entries
+- **Journal Editor**: Clean textarea interface for writing entries
 - **Mood Tracking**: Record emotional state with each entry
 - **Quick Check-ins**: One-tap mood entries with emoji shortcuts
 - **Tagging System**: Organize entries with custom tags
-- **Search & Filter**: Find entries by date, mood, or tags
+- **Tag Filtering**: Filter entries by one or more tags
 - **Centralized Submit Logic**: Consistent journaling flow across all entry methods
 
 ### AI-Powered Insights
@@ -199,7 +215,6 @@ npm start        # Start the server
 ### Data Visualization
 - **Advanced Mood Timeline**: Interactive charts with accurate axes, tooltips, and smooth animations using Recharts
 - **Mood Trends**: Charts showing emotional patterns over time with color-coded sentiment
-- **Activity Heatmap**: Visual representation of journaling consistency
 - **Statistics Dashboard**: Comprehensive overview of your journaling journey
 - **Goal Progress Tracking**: Visual progress bars and streak counters for custom goals
 
@@ -216,8 +231,9 @@ npm start        # Start the server
 ```env
 COSMOSDB_URI=your_mongodb_connection_string
 COSMOSDB_DBNAME=your_database_name
-AI_API_KEY=your_ai_service_api_key
-FIREBASE_PROJECT_ID=your_firebase_project_id
+AZURE_OPENAI_API_KEY=your_azure_openai_api_key
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=your_deployment_name
 ```
 
 ## Contributing
@@ -244,9 +260,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- **Firebase** for authentication and hosting
+- **Firebase** for authentication
 - **MongoDB/CosmosDB** for reliable data storage
-- **OpenAI** for AI-powered emotional analysis
+- **Azure OpenAI** for AI-powered emotional analysis
 - **Recharts** for advanced, interactive data visualization
 - **Tailwind CSS** for beautiful, responsive design
 - **Lucide** for consistent, beautiful icons
@@ -257,7 +273,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Environment Variables**: Ensure all required environment variables are set (see SETUP.md)
 - **Firebase Configuration**: Double-check Firebase project settings and service account key
 - **Database Connection**: Verify MongoDB/CosmosDB connection string and permissions
-- **AI Integration**: Confirm OpenAI API key and endpoint configuration
+- **AI Integration**: Confirm Azure OpenAI API key, endpoint, and deployment configuration
 
 ### Performance Considerations
 - **Large Datasets**: Database queries may slow down with thousands of journal entries
@@ -272,7 +288,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Important Security Notes
 
-- **Environment Variables**: Ensure `.env` files are never committed to version control. Use `.env.example` as a template.
+- **Environment Variables**: Ensure `.env` files are never committed to version control. Use the variable lists in this README and SETUP.md when creating local configuration files.
 - **Service Account Keys**: Never commit `serviceAccountKey.json` or similar sensitive files. These should be added to `.gitignore`.
 - **Secrets Management**: Use a secure secrets management tool for production environments.
 

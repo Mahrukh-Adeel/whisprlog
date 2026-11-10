@@ -39,7 +39,7 @@ cd ../backend && npm install
 #### Backend Environment Variables
 ```bash
 cd backend
-cp .env.example .env
+touch .env
 ```
 
 Edit `backend/.env`:
@@ -51,16 +51,10 @@ COSMOSDB_URI=mongodb://localhost:27017/whisprlog
 
 COSMOSDB_DBNAME=whisprlog
 
-# AI Service Configuration (choose one)
-# For OpenAI:
-OPENAI_API_KEY=your_openai_api_key_here
-# For Azure OpenAI:
+# AI Service Configuration (optional; fallback analysis is used when omitted)
 AZURE_OPENAI_API_KEY=your_azure_openai_key_here
 AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 AZURE_OPENAI_DEPLOYMENT=your-deployment-name
-
-# Firebase Configuration
-FIREBASE_PROJECT_ID=your-firebase-project-id
 
 # Server Configuration
 PORT=5002
@@ -70,7 +64,7 @@ NODE_ENV=development
 #### Frontend Environment Variables
 ```bash
 cd ../app
-cp .env.example .env.local
+touch .env.local
 ```
 
 Edit `app/.env.local`:
@@ -85,9 +79,6 @@ VITE_FIREBASE_APP_ID=your_app_id
 
 # API Configuration
 VITE_API_BASE=http://localhost:5002
-
-# Development Options
-VITE_DEBUG=false
 ```
 
 ### 3. Firebase Setup (Detailed)
@@ -144,12 +135,7 @@ mongosh
 
 ### 5. AI Service Setup
 
-#### Option A: OpenAI
-1. Create account at [OpenAI](https://platform.openai.com/)
-2. Generate API key from API Keys section
-3. Add to `backend/.env` as `OPENAI_API_KEY`
-
-#### Option B: Azure OpenAI
+#### Azure OpenAI
 1. Create Azure OpenAI resource in Azure Portal
 2. Deploy a model (e.g., gpt-3.5-turbo)
 3. Get API key and endpoint from Azure Portal
@@ -173,15 +159,13 @@ cd app && npm run dev
 |----------|-------------|----------|---------|
 | `COSMOSDB_URI` | MongoDB connection string | ✅ | - |
 | `COSMOSDB_DBNAME` | Database name | ✅ | `whisprlog` |
-| `OPENAI_API_KEY` | OpenAI API key | ✅* | - |
-| `AZURE_OPENAI_API_KEY` | Azure OpenAI API key | ✅* | - |
-| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint | ✅* | - |
-| `AZURE_OPENAI_DEPLOYMENT` | Azure deployment name | ✅* | - |
-| `FIREBASE_PROJECT_ID` | Firebase project ID | ✅ | - |
+| `AZURE_OPENAI_API_KEY` | Azure OpenAI API key | ❌ | - |
+| `AZURE_OPENAI_ENDPOINT` | Azure OpenAI endpoint | ❌ | - |
+| `AZURE_OPENAI_DEPLOYMENT` | Azure deployment name | ❌ | - |
 | `PORT` | Server port | ❌ | `5002` |
 | `NODE_ENV` | Environment mode | ❌ | `development` |
 
-*Either OpenAI or Azure OpenAI configuration is required
+Azure OpenAI configuration is optional; the backend uses fallback analysis when it is not configured.
 
 ### Frontend (.env.local)
 | Variable | Description | Required | Default |
@@ -193,7 +177,6 @@ cd app && npm run dev
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase messaging sender ID | ✅ | - |
 | `VITE_FIREBASE_APP_ID` | Firebase app ID | ✅ | - |
 | `VITE_API_BASE` | Backend API URL | ❌ | `http://localhost:5002` |
-| `VITE_DEBUG` | Enable debug logging | ❌ | `false` |
 
 ## 🔒 Security Configuration
 
@@ -303,15 +286,9 @@ Module not found: Can't resolve 'recharts'
 - Clear node_modules: `rm -rf node_modules && npm install`
 - Check Node.js version compatibility
 
-### Debug Mode
-Enable detailed logging by setting:
-```env
-VITE_DEBUG=true
-```
-
 ### Health Checks
 Test your setup with these endpoints:
-- Backend health: `http://localhost:5002/health`
+- Backend health: `http://localhost:5002/api/health`
 - Frontend dev server: `http://localhost:5173`
 
 ## 🚀 Deployment
@@ -357,14 +334,7 @@ CMD ["npm", "start"]
 
 ## 🧪 Testing
 
-### Running Tests
-```bash
-# Frontend tests
-cd app && npm test
-
-# Backend tests (if implemented)
-cd backend && npm test
-```
+No automated test script is currently configured in the frontend or backend packages.
 
 ### Manual Testing Checklist
 - [ ] User registration and login
@@ -403,19 +373,16 @@ cd backend && npm test
 
 ```bash
 # Development
-npm run dev              # Start frontend dev server
-npm start               # Start backend server
-npm run build           # Build for production
-npm test                # Run tests
+cd app && npm run dev       # Start frontend dev server
+cd backend && npm start     # Start backend server
+cd app && npm run build     # Build frontend for production
 
 # Database
 mongosh                 # Connect to MongoDB shell
 mongoexport             # Export database data
 mongoimport             # Import database data
 
-# Firebase
-firebase deploy         # Deploy to Firebase hosting
-firebase functions:log  # View function logs
+# Firebase configuration is managed through the Firebase console and app/.env.local.
 ```
 
 ---

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, LogOut, Download, Trash2, Moon, Sun, Bell, BellOff, Shield, Mail, Calendar, BarChart3, X } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../contexts/themeContext.jsx';
+import { useTheme } from '../contexts/useTheme.js';
 import CustomAlert from './CustomAlert.jsx';
 import MilestoneCelebrationModal from './MilestoneCelebrationModal.jsx';
 import CustomGoals from './CustomGoals.jsx';

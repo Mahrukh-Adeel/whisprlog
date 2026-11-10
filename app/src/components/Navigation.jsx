@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Heart, BookOpen, TrendingUp, HelpCircle, User, Menu, X, Moon, Sun, LogOut, Calendar } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../contexts/themeContext.jsx';
+import { useTheme } from '../contexts/useTheme.js';
 
 const Navigation = () => {
   const { user, logout } = useAuth();

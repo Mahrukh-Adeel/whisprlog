@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../contexts/themeContext';
+import { useTheme } from '../contexts/useTheme.js';
 import { Filter, X, Calendar, Tag, Heart, Brain, Sparkles } from 'lucide-react';
 
 const API_BASE = import.meta?.env?.VITE_API_BASE || 'http://localhost:5002';

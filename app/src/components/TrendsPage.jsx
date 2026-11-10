@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import { TrendingUp, TrendingDown, Heart, Calendar, BarChart3, PieChart, Activity, Smile, Frown, Meh, Brain, Target, Clock, Zap, Sparkles, AlertTriangle, CheckCircle, Lightbulb, Thermometer, Wind, Moon, Sun, Users, Briefcase, Coffee, Shield, User, Link } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import CustomGoals from './CustomGoals.jsx';

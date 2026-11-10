@@ -107,11 +107,12 @@ export default function JournalEntryForm() {
       const result = await res.json();
 
       if (privacySettings.aiAnalysisEnabled) {
+        const aiResult = result.analysis || result;
         const normalized = {
-          sentiment: result.sentiment,
-          emotions: result.emotions,
-          mood: result.mood,
-          summary: result.summary
+          sentiment: aiResult.sentiment,
+          emotions: aiResult.emotions,
+          mood: aiResult.mood,
+          summary: aiResult.summary
         };
         if (normalized.emotions && !Array.isArray(normalized.emotions)) {
           normalized.emotions = Array.isArray(normalized.emotions.split)
